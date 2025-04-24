@@ -1,0 +1,43 @@
+=============== Apr 24, 2025 (KST) ===============
+16:00:33.277922 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+16:00:33.283168 db@open opening
+16:00:33.284147 version@stat F·[] S·0B[] Sc·[]
+16:00:33.285151 db@janitor F·2 G·0
+16:00:33.286149 db@open done T·2.9813ms
+16:00:33.314594 db@close closing
+16:00:33.315115 db@close done T·521µs
+=============== Apr 24, 2025 (KST) ===============
+16:00:39.517077 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+16:00:39.517077 version@stat F·[] S·0B[] Sc·[]
+16:00:39.517077 db@open opening
+16:00:39.517077 journal@recovery F·1
+16:00:39.518580 journal@recovery recovering @1
+16:00:39.522027 memdb@flush created L0@2 N·16 S·1KiB ",\xff\xac..\xe3-\xfc,v5":"\xeb@\xf6..\x9fe\x91,v3"
+16:00:39.524022 version@stat F·[1] S·1KiB[1KiB] Sc·[0.25]
+16:00:39.530248 db@janitor F·3 G·0
+16:00:39.530248 db@open done T·13.1718ms
+16:00:40.106488 memdb@flush N·59 S·6KiB
+16:00:40.108867 memdb@flush created L0@6 N·59 S·2KiB "\b$\xdf..\x8d\xedT,v74":"\xf89i..Y\x0eB,v75"
+16:00:40.108867 version@stat F·[2] S·4KiB[4KiB] Sc·[0.50]
+16:00:40.109942 memdb@flush committed F·1 T·3.4534ms
+16:00:40.109942 journal@remove removed @3
+16:00:40.109942 table@compaction range L-1 "":""
+16:00:40.109942 table@compaction L0·2 -> L1·0 S·4KiB Q·76
+16:00:40.127486 table@build created L1@7 N·55 S·3KiB "\b$\xdf..\x8d\xedT,v74":"\xf89i..Y\x0eB,v75"
+16:00:40.127486 version@stat F·[0 1] S·3KiB[0B 3KiB] Sc·[0.00 0.00]
+16:00:40.128007 table@compaction committed F-1 S-711B Ke·0 D·20 T·18.0648ms
+16:00:40.128530 table@remove removed @6
+16:00:40.128530 db@close closing
+16:00:40.129325 db@close done T·795.8µs
+=============== Apr 24, 2025 (KST) ===============
+16:00:56.645165 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+16:00:56.646166 version@stat F·[0 1] S·3KiB[0B 3KiB] Sc·[0.00 0.00]
+16:00:56.646166 db@open opening
+16:00:56.646166 journal@recovery F·1
+16:00:56.752182 journal@recovery recovering @5
+16:00:56.758347 version@stat F·[0 1] S·3KiB[0B 3KiB] Sc·[0.00 0.00]
+16:00:56.763880 db@janitor F·4 G·1
+16:00:56.763880 db@janitor removing table-2
+16:00:56.763880 db@open done T·117.7141ms
+16:01:03.725562 db@close closing
+16:01:03.725562 db@close done T·0s

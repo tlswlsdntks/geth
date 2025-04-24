@@ -1,0 +1,21 @@
+get --datadir data account new
+geth --datadir data account new
+eth.blockNumber
+miner.start(1)
+eth.blockNumber
+miner.stop()
+eth.blockNumber
+geth --datadir data export backup 0 8
+eth.blockNumber
+geth --datadir data import backup
+eth.blockNumber
+miner.start(1)
+eth.blockNumber
+miner.stop()
+eth.blockNumber
+miner.start(1)
+eth.blockNumber
+miner.start(1)
+eth.blockNumber
+miner.stop()
+eth.blockNumber
