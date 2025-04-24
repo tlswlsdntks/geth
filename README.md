@@ -57,6 +57,9 @@ WebSocket 프로토콜을 통해 노드와 통신:
     geth --ws.addr "0.0.0.0"
     geth --ws.port "8546
 
+Geth 실행(모든 도메인, 모든 네트워크에서의 요청 및 수신 허용)
+    geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --http.addr "0.0.0.0" --http.corsdomain "*" (console)
+
 블록넘버 확인:
     eth.blockNumber
 
@@ -72,8 +75,40 @@ WebSocket 프로토콜을 통해 노드와 통신:
     eth.blockNumber 로 재확인
     /geth 폴더 삭제
 
-블록체인 데이터 가져오기(Geth 실행상태):
+블록체인 데이터 가져오기(Geth 종료상태):
     geth --datadir data import backup
 
 명령어 모음:
     띄어쓰기 두번 + 탭
+
+어드레스:
+    이더리움 어드레스는 이더리움 네트워크에서 사용자의 계정을 식별하는 고유한 주소이다.
+    보통 42자의 16진수 문자열로 구성되어 있으며, '0x'로 시작한다.
+    이 주소를 통해 이더리움 기반의 토큰이나 스마트 계약과의 거래가 이루어지며, 개인의 자산을 안전하게 관리하는 데 중요한 역할을 한다.
+
+어드레스(계좌의 "주소") 생성:
+    personal.newAccount(0000)
+
+키 스토어(계좌를 안전하게 관리하는 "지갑")
+    UTC--2025-04-24T07-31-29.582961800Z--1f6f5facf663e147809c02e56495ee9173db10ae
+    {
+    "address": "1f6f5facf663e147809c02e56495ee9173db10ae", // address: 암호화된 데이터 또는 계좌 주소와 관련된 식별자
+    "crypto": { // crypto: 암호화 관련 정보를 담고 있는 객체
+        "cipher": "aes-128-ctr", // cipher: 사용된 암호화 알고리즘(여기서는 AES-128-CTR)
+        "ciphertext": "a6a615f6dded661ade5176195d3637b63eeb12fcb74dec6f49a9bd9c73017c97", // ciphertext: 암호화된 실제 데이터
+        "cipherparams": { // cipherparams: 암호화에 사용된 초기화 벡터(IV) 정보
+            "iv": "d9a8ba751bb8c7b769f66c3e780614e9" // iv: 초기화 벡터 값
+        },
+        "kdf": "scrypt", // kdf: 키 파생 함수(여기서는 scrypt)
+        "kdfparams": { // kdfparams: 키 파생 함수에 필요한 매개변수
+            "dklen": 32, // dklen: 파생 키의 길이(바이트 단위)
+            "n": 262144, // n: scrypt 알고리즘의 CPU/메모리 비용 매개변수
+            "p": 1, // p: scrypt의 병렬 처리 파라미터
+            "r": 8, // r: scrypt의 블록 크기
+            "salt": "621d80dde52903e95b4203351ac7ce330c6a13d617f46384d2a09f2b0bfd3f9f" // salt: 솔트 값
+        },
+        "mac": "9125457da28fb4bb39118601d668ad6bad856118a91b11a337e9ea5b721a7e94" // mac: 메시지 인증 코드, 데이터 무결성 검증용
+    },
+    "id": "3bef7418-7be2-4db9-af65-6a7790f1c8d6", // id: 이 데이터의 고유 식별자(UUID 형식)
+    "version": 3 // version: 데이터 구조의 버전 번호
+}
