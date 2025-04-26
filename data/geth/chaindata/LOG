@@ -152,3 +152,16 @@
 18:13:21.995056 table@remove removed @22
 18:15:54.906915 db@close closing
 18:15:54.907434 db@close done T·519.6µs
+=============== Apr 26, 2025 (KST) ===============
+18:27:04.043845 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:27:04.043845 version@stat F·[0 1] S·89KiB[0B 89KiB] Sc·[0.00 0.00]
+18:27:04.043845 db@open opening
+18:27:04.043845 journal@recovery F·1
+18:27:04.043845 journal@recovery recovering @33
+18:27:04.053897 memdb@flush created L0@36 N·490 S·29KiB "2\x15\b..\xde;^,v2724":"\xe4B\t..)\xd1\xe3,v2722"
+18:27:04.053897 version@stat F·[1 1] S·118KiB[29KiB 89KiB] Sc·[0.25 0.00]
+18:27:04.064351 db@janitor F·5 G·1
+18:27:04.066873 db@janitor removing table-32
+18:27:04.066873 db@open done T·23.0282ms
+18:58:36.199134 db@close closing
+18:58:36.199638 db@close done T·503.8µs

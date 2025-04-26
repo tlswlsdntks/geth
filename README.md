@@ -133,7 +133,7 @@ Geth 실행(모든 도메인, 네트워크에서의 요청 및 수신 허용)
         nonce: "0x74fe754386698a2c", // 채굴 난이도 조정을 위한 값
         number: 10, // 블록의 순서 (이 경우 10번째 블록)
         parentHash: "0xef6b3b8927a4414afcbd887c9e297f22c1f88e7726198fe9fdc227f9ac1c474e", // 이전 블록의 해시
-        receiptsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", // 트랜잭션 영수증의 머클트리 루트
+        receiptsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", // 트랜잭션 영수증의 Merkle 루트
         sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", // 삼촌 블록의 해시
         size: 538, // 블록 크기 (바이트 단위)
         stateRoot: "0xde451589ca6dcf03b0d6fa8fef689abfd10239801ff2d833eb45e23242ab6cc4", // 현재 상태의 Merkle 루트
@@ -143,6 +143,10 @@ Geth 실행(모든 도메인, 네트워크에서의 요청 및 수신 허용)
         transactionsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", // 트랜잭션 Merkle 루트
         uncles: [] // 포함된 삼촌 블록 목록 (이 경우 없음)
     }
+
+Merkle 루트:
+    여러 데이터를 각각 해시(암호화된 값)로 바꾸고, 이 해시들을 계층적으로 연결해서 최상단에 하나의 루트 해시값을 만든다.
+    이 루트 해시값만 보면 전체 데이터가 변했는지 쉽게 확인할 수 있어서, 주로 블록체인에서 데이터 무결성을 검증하는 데 사용된다.
 
 geth 코드 - 블록의 구조 확인:
     go-ethereum\core\types\block.go, line: 206
@@ -208,3 +212,83 @@ metamask 에 rpc 연결:
 
 이더(ETH) 단위로 변환:
     web3.fromWei(eth.getBalance("d817fee0b5393a005dc639d2abae4896ba38dcd3"), "ether") 
+
+transaction 실습:
+    트랜잭션을 보내는 명령어:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+
+    트랜잭션을 확인하는 명령어:
+        eth.getTransaction("0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c")
+        {
+            blockHash: "0x5aee0282a3a00ba52f9553de8c1e4945dda82901cb1c1928bab9adabfb041c05", // 블록의 유일한 식별자 역할
+            blockNumber: 744, // 블록의 순서
+            chainId: "0x3039", // 블록체인 네트워크의 ID
+            from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b", // 거래를 발신한 계정(주소)
+            gas: 21000, // 거래 수행에 필요한 가스의 양(기본 송금 거래는 21000 가스)
+            gasPrice: 1000000000, // 가스 가격(단위: wei)
+            hash: "0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c", // 이 거래의 고유한 해시값
+            input: "0x", // 거래에 포함된 데이터
+            nonce: 3, // 발신 계정이 생성된 이후 보낸 거래의 순서 번호
+            r: "0x16aa2e2f09e20398ad6e75937e669f9f8f5ea99d99c39db6a2b6d6e6d777c44b", // 디지털 서명의 일부
+            s: "0x7385fcba0d5ef180e6b6f23f356011feca2e918656a0f05f613ed887cb0c270e", // 디지털 서명의 일부
+            to: "0xd817fee0b5393a005dc639d2abae4896ba38dcd3", // 거래의 수신자 주소
+            transactionIndex: 0, // 블록 내에서 이 거래가 몇 번째로 포함되었는지 나타내는 인덱스
+            type: "0x0", 거래 유형을 나타내며, 여기서는 일반 거래(legacy transaction)를 의미
+            v: "0x6095", // 서명 유효성 검증에 필요
+            value: 10000000000000000000 // 송금된 이더(ETH)의 양(단위: wei), 10^19 wei이며, 이는 10 ETH을 의미
+        }
+
+    전송되지 않은 트랜잭션을 확인하는 명령어:
+        miner.stop()
+        eth.mining
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20,"ether")})
+        eth.pendingTransactions
+        [{
+            blockHash: null,
+            blockNumber: null,
+            chainId: "0x3039",
+            from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            gas: 21000,
+            gasPrice: 1000000000,
+            hash: "0x167cc1b5e9d9cc04bb8cca59e1acb32b6c7e58c6ebd65121f2b0782cf7831c81",
+            input: "0x",
+            nonce: 4,
+            r: "0xaa23f2179c7b1c6fb99e43f02a9c7744069e4fa50a05e4a4d884b5d177e7a128",
+            s: "0x170ff701cb41c4e8ba45e719af374acc20ee4ea62a103cfd1e7b5ef117e13e10",
+            to: "0xd817fee0b5393a005dc639d2abae4896ba38dcd3",
+            transactionIndex: null,
+            type: "0x0",
+            v: "0x6095",
+            value: 10000000000000000000
+        }]
+        miner.start(1)
+        eth.mining
+        eth.pendingTransactions
+
+    16진수 데이터를 포함하여 트랜잭션을 보내는 방법:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20,"ether"), data: "0x01234567"})
+        eth.getTransaction("0x3be93044e3b6e25ad7ec4d9352c59038f6ee2437512b6146a2403f81bd12726c")
+        {
+            blockHash: "0xe71d735029f051512ac949756d9ebb3d00ac6bde8ab251e08da5116040948b57",
+            blockNumber: 855,
+            chainId: "0x3039",
+            from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            gas: 21064,
+            gasPrice: 1000000000,
+            hash: "0x3be93044e3b6e25ad7ec4d9352c59038f6ee2437512b6146a2403f81bd12726c",
+            input: "0x01234567",
+            nonce: 5,
+            r: "0x4a6087fd613d21cc89da2e0da9684e5f646d3d77b76086bb6d0578993d14b568",
+            s: "0x5f931813871ef4d8ed4e75581d2271aadbbd8fa61855ab6457ac79225e2cf485",
+            to: "0xd817fee0b5393a005dc639d2abae4896ba38dcd3",
+            transactionIndex: 0,
+            type: "0x0",
+            v: "0x6095",
+        value: 20000000000000000000
+        }
+        https://explorer.popcateum.org/tx/0x9f9cd681bc94325f6252297e9d87e2384739a5984ea033c49645cfc36679be8e?network=Popcateum
+
+    Error: authentication needed: password or unlock 처리:
+        1. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --allow-insecure-unlock
+        2. pesonal.unlockAccount(eth.accounts[n], "1234', 0)
+        3. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password
