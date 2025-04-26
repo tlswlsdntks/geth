@@ -81,16 +81,17 @@ Geth 실행(모든 도메인, 네트워크에서의 요청 및 수신 허용)
 명령어 모음:
     띄어쓰기 두번 + 탭
 
-어드레스:
+address:
     이더리움 어드레스는 이더리움 네트워크에서 사용자의 계정을 식별하는 고유한 주소이다.
     보통 42자의 16진수 문자열로 구성되어 있으며, '0x'로 시작한다.
     이 주소를 통해 이더리움 기반의 토큰이나 스마트 계약과의 거래가 이루어지며, 개인의 자산을 안전하게 관리하는 데 중요한 역할을 한다.
+    private key > public key > address 순으로 파생되어 생성된다.
 
-어드레스(계좌의 "주소") 생성:
+address(계좌의 "주소") 생성:
     personal.newAccount("0000")
     일반적으로 비밀번호를 입력하는 부분은 문자열로 입력해야 하며, 숫자만 넣는 경우 오류가 발생할 수 있다.
 
-키 스토어(계좌를 안전하게 관리하는 "지갑")
+keystore(계좌를 안전하게 관리하는 "지갑"):
     {
         "address": "1f6f5facf663e147809c02e56495ee9173db10ae", // address: 암호화된 데이터 또는 계좌 주소와 관련된 식별자
         "crypto": { // crypto: 암호화 관련 정보를 담고 있는 객체
@@ -150,6 +151,27 @@ Merkle 루트:
 
 geth 코드 - 블록의 구조 확인:
     go-ethereum\core\types\block.go, line: 206
+    type Block struct {
+        header       *Header // 블록의 헤더 정보
+            // 헤더 정보에는 블록의 버전, 이전 블록 해시, 타임스탬프, 난이도, 논스, 거래 루트 등 블록의 핵심 메타데이터가 포함된다.
+        uncles       []*Header // 메인 블록과 별개로 유효한 블록 헤더들의 리스트( 블록체인에 보상과 보안 강화를 위해 포함)
+        transactions Transactions // 블록에 포함된 거래들의 리스트
+        withdrawals  Withdrawals //  출금 관련 데이터
+
+        // witness is not an encoded part of the block body.
+        // It is held in Block in order for easy relaying to the places
+        // that process it.
+        witness *ExecutionWitness // 블록의 실행 증명 또는 검증에 필요한 정보
+
+        // caches
+        hash atomic.Pointer[common.Hash] // 블록의 해시값
+        size atomic.Uint64 // 블록의 크기
+
+        // These fields are used by package eth to track
+        // inter-peer block relay.
+        ReceivedAt   time.Time // 블록이 네트워크를 통해 수신된 시간
+        ReceivedFrom interface{} // 블록을 전달받은 출처를 나타내는 필드
+    }
 
 엉클 블록:
     채굴자가 정식 블록(메인 체인에 포함된 블록)을 채굴하는 것 외에, 경쟁 과정에서 유효하지만 최종 블록으로 채택되지 않은 블록을 의미한다.
@@ -365,8 +387,7 @@ transaction 구조
         eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
         eth.getRawTransaction("0xacf4b603260de56b7b57f55f5e3981a7aa607c00b6206dd2062cc6fa958639f9")
 
-    geth 코드 - Receipt 구조체 확인:
-        거래 영수증을 나타내는 데이터 구조
+    geth 코드 - Receipt(거래 영수증을 나타내는 데이터) 구조체 확인:
         go-ethereum\core\types\receipt.go, line: 52
         type Receipt struct {
             // Consensus fields: These fields are defined by the Yellow Paper
@@ -410,3 +431,35 @@ transaction 구조
             transactionIndex: 0,
             type: "0x0"
         }
+
+signature:
+    트랜잭션 서명:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+        eth.getTransaction("0x9c36184f0c828f62a2f139428b89a1ff7837eaa412d480dc741dadcdd3e9e0b1")
+        eth.signTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000, nonce: 9})
+        {
+            raw: "0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb579a163028debe7899",
+            tx: {
+                gas: "0x5208",
+                gasPrice: "0x3b9aca00",
+                hash: " ",
+                input: "0x",
+                maxFeePerGas: null,
+                maxPriorityFeePerGas: null,
+                nonce: "0x9",
+                r: "0x4db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84af",
+                s: "0x41c841c10a0c04f6091873fd5bdd98f17534bd0a627bb579a163028debe7899",
+                to: "0xd817fee0b5393a005dc639d2abae4896ba38dcd3",
+                type: "0x0",
+                v: "0x6095",
+                value: "0x56bc75e2d63100000"
+            }
+        }
+
+    geth 코드 - WithSignature 함수 확인:
+        go-ethereum\core\types\transaction_test.go, line: 571
+
+    서명된 트랜잭션 데이터 전송:
+        eth.sendRawTransaction("0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb57
+        9a163028debe7899")
+        eth.getTransaction("0x5b867e6b436e8face24f578c118421a5871ffd673a4a9b623e5d518b7c11c598")
