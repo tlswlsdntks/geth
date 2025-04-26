@@ -19,3 +19,4 @@ miner.start(1)
 eth.blockNumber
 miner.stop()
 eth.blockNumber
+clear

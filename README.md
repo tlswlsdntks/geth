@@ -73,7 +73,7 @@ Geth 실행(모든 도메인, 모든 네트워크에서의 요청 및 수신 허
 블록체인 데이터 삭제:
     geth --datadir data removedb
     eth.blockNumber 로 재확인
-    /geth 폴더 삭제
+    geth 폴더 삭제
 
 블록체인 데이터 가져오기(Geth 종료상태):
     geth --datadir data import backup
@@ -92,23 +92,57 @@ Geth 실행(모든 도메인, 모든 네트워크에서의 요청 및 수신 허
 키 스토어(계좌를 안전하게 관리하는 "지갑")
     UTC--2025-04-24T07-31-29.582961800Z--1f6f5facf663e147809c02e56495ee9173db10ae
     {
-    "address": "1f6f5facf663e147809c02e56495ee9173db10ae", // address: 암호화된 데이터 또는 계좌 주소와 관련된 식별자
-    "crypto": { // crypto: 암호화 관련 정보를 담고 있는 객체
-        "cipher": "aes-128-ctr", // cipher: 사용된 암호화 알고리즘(여기서는 AES-128-CTR)
-        "ciphertext": "a6a615f6dded661ade5176195d3637b63eeb12fcb74dec6f49a9bd9c73017c97", // ciphertext: 암호화된 실제 데이터
-        "cipherparams": { // cipherparams: 암호화에 사용된 초기화 벡터(IV) 정보
-            "iv": "d9a8ba751bb8c7b769f66c3e780614e9" // iv: 초기화 벡터 값
+        "address": "1f6f5facf663e147809c02e56495ee9173db10ae", // address: 암호화된 데이터 또는 계좌 주소와 관련된 식별자
+        "crypto": { // crypto: 암호화 관련 정보를 담고 있는 객체
+            "cipher": "aes-128-ctr", // cipher: 사용된 암호화 알고리즘(여기서는 AES-128-CTR)
+            "ciphertext": "a6a615f6dded661ade5176195d3637b63eeb12fcb74dec6f49a9bd9c73017c97", // ciphertext: 암호화된 실제 데이터
+            "cipherparams": { // cipherparams: 암호화에 사용된 초기화 벡터(IV) 정보
+                "iv": "d9a8ba751bb8c7b769f66c3e780614e9" // iv: 초기화 벡터 값
+            },
+            "kdf": "scrypt", // kdf: 키 파생 함수(여기서는 scrypt)
+            "kdfparams": { // kdfparams: 키 파생 함수에 필요한 매개변수
+                "dklen": 32, // dklen: 파생 키의 길이(바이트 단위)
+                "n": 262144, // n: scrypt 알고리즘의 CPU/메모리 비용 매개변수
+                "p": 1, // p: scrypt의 병렬 처리 파라미터
+                "r": 8, // r: scrypt의 블록 크기
+                "salt": "621d80dde52903e95b4203351ac7ce330c6a13d617f46384d2a09f2b0bfd3f9f" // salt: 솔트 값
+            },
+            "mac": "9125457da28fb4bb39118601d668ad6bad856118a91b11a337e9ea5b721a7e94" // mac: 메시지 인증 코드, 데이터 무결성 검증용
         },
-        "kdf": "scrypt", // kdf: 키 파생 함수(여기서는 scrypt)
-        "kdfparams": { // kdfparams: 키 파생 함수에 필요한 매개변수
-            "dklen": 32, // dklen: 파생 키의 길이(바이트 단위)
-            "n": 262144, // n: scrypt 알고리즘의 CPU/메모리 비용 매개변수
-            "p": 1, // p: scrypt의 병렬 처리 파라미터
-            "r": 8, // r: scrypt의 블록 크기
-            "salt": "621d80dde52903e95b4203351ac7ce330c6a13d617f46384d2a09f2b0bfd3f9f" // salt: 솔트 값
-        },
-        "mac": "9125457da28fb4bb39118601d668ad6bad856118a91b11a337e9ea5b721a7e94" // mac: 메시지 인증 코드, 데이터 무결성 검증용
-    },
-    "id": "3bef7418-7be2-4db9-af65-6a7790f1c8d6", // id: 이 데이터의 고유 식별자(UUID 형식)
-    "version": 3 // version: 데이터 구조의 버전 번호
-}
+        "id": "3bef7418-7be2-4db9-af65-6a7790f1c8d6", // id: 이 데이터의 고유 식별자(UUID 형식)
+        "version": 3 // version: 데이터 구조의 버전 번호
+    }
+
+현재 노드의 기본 계정 또는 채굴 계정:
+    eth.coinbase
+
+노드에 저장된 모든 계정 목록:
+    eth.accounts
+
+블록 번호 n번에 해당하는 블록의 정보:
+    eth.getBlock(n)
+    {
+        difficulty: 131648, // 블록 채굴 난이도
+        extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773", // 블록에 포함된 임의 데이터
+        gasLimit: 8078455, // 블록에 허용된 최대 가스량
+        gasUsed: 0, // 실제 사용된 가스량 (이 경우 0)
+        hash: "0xc4b7ea6c09825f97d7fa96ced3019124ca603805920a627ddec9fa9296bc05c4", // 블록의 고유 식별값
+        logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", // 로그 검색을 위한 필터
+        miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b", // 블록을 채굴한 사람 또는 노드
+        mixHash: "0x63ade33c2a1c4c124de9b3bc376ebadbdd8baecea3f13b41663d9bed9987c498", // 작업 증명에 사용되는 값
+        nonce: "0x74fe754386698a2c", // 채굴 난이도 조정을 위한 값
+        number: 10, // 블록의 순서 (이 경우 10번째 블록)
+        parentHash: "0xef6b3b8927a4414afcbd887c9e297f22c1f88e7726198fe9fdc227f9ac1c474e", // 이전 블록의 해시
+        receiptsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", // 트랜잭션 영수증의 머클트리 루트
+        sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", // 삼촌 블록의 해시
+        size: 538, // 블록 크기 (바이트 단위)
+        stateRoot: "0xde451589ca6dcf03b0d6fa8fef689abfd10239801ff2d833eb45e23242ab6cc4", // 현재 상태의 Merkle 루트
+        timestamp: 1745652592, // 블록 생성 시간 (유닉스 시간)
+        totalDifficulty: 1313601, // 지금까지 채굴된 전체 난이도
+        transactions: [], // 포함된 트랜잭션 목록 (이 경우 없음)
+        transactionsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421", // 트랜잭션 Merkle 루트
+        uncles: [] // 포함된 삼촌 블록 목록 (이 경우 없음)
+    }
+
+geth 코드 - 블록의 구조 확인:
+    go-ethereum\core\types\block.go, line: 206
