@@ -41,7 +41,7 @@ Geth에서 가비지 컬렉션(Garbage Collection) 모드 설정:
 Geth 실행 시, 계정을 잠금/해제:
     geth --datadir data --unlock 0 
     geth --datadir data --unlock 0 --password password: 비밀번호 파일로 잠금 해제
-    geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 계정을 잠금 해제할 때 보안 검증을 생략하거나 비보안 방식으로 허용
+    geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 보안상 위험이 있을 수 있는 계정 잠금 해제(특히 RPC를 통해 원격에서 잠금 해제하는 경우)를 허용
 
 HTTP 프로토콜을 통해 노드와 통신:
     geth --http: HTTP RPC 서버 활성화
@@ -57,7 +57,7 @@ WebSocket 프로토콜을 통해 노드와 통신:
     geth --ws.addr "0.0.0.0"
     geth --ws.port "8546
 
-Geth 실행(모든 도메인, 모든 네트워크에서의 요청 및 수신 허용)
+Geth 실행(모든 도메인, 네트워크에서의 요청 및 수신 허용)
     geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --http.addr "0.0.0.0" --http.corsdomain "*" (console)
 
 블록넘버 확인:
@@ -87,10 +87,10 @@ Geth 실행(모든 도메인, 모든 네트워크에서의 요청 및 수신 허
     이 주소를 통해 이더리움 기반의 토큰이나 스마트 계약과의 거래가 이루어지며, 개인의 자산을 안전하게 관리하는 데 중요한 역할을 한다.
 
 어드레스(계좌의 "주소") 생성:
-    personal.newAccount(0000)
+    personal.newAccount("0000")
+    일반적으로 비밀번호를 입력하는 부분은 문자열로 입력해야 하며, 숫자만 넣는 경우 오류가 발생할 수 있다.
 
 키 스토어(계좌를 안전하게 관리하는 "지갑")
-    UTC--2025-04-24T07-31-29.582961800Z--1f6f5facf663e147809c02e56495ee9173db10ae
     {
         "address": "1f6f5facf663e147809c02e56495ee9173db10ae", // address: 암호화된 데이터 또는 계좌 주소와 관련된 식별자
         "crypto": { // crypto: 암호화 관련 정보를 담고 있는 객체
@@ -178,3 +178,33 @@ geth 코드 - 블록의 구조 확인:
     3. Clique
         이더리움 기반의 프라이빗 또는 퍼블릭 네트워크에서 사용하는 권한 증명(Proof of Authority, PoA) 합의 알고리즘이다.
         네트워크 참여자가 신뢰할 수 있는 검증자들로 제한되어 있어, 보안성과 신뢰성을 높였다.
+
+metamask 에 rpc 연결:
+    1. Geth 실행(채굴 수행 설정, 계정 잠금 해제):
+        geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password --allow-insecure-unlock
+    2. metamask 확장 프로그램 설치
+    3. metamask 회원가입/로그인
+    2. 테스트 네트워크 표시 선택:
+        chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#settings/advanced
+    4. metamask 사용자 지정 네트워크 추가:
+        네트워크 이름:
+            테스트 넷
+        기본 RPC URL:
+            127.0.0.1:8545
+        체인 ID:
+            12345
+        통화 기호:
+            tETH
+    5. 계정 또는 하드웨어 지갑 추가:
+        private key 선택
+        유형 선택:
+            JSON 파일
+        파일 선택
+        비밀번호 입력
+    6. 보내기/받기 
+
+현재 보유하고 있는 이더(ETH) 잔액 조회:
+    eth.getBalance("0c33043f0926e2e2467fca96117ebefbf86d660b")
+
+이더(ETH) 단위로 변환:
+    web3.fromWei(eth.getBalance("d817fee0b5393a005dc639d2abae4896ba38dcd3"), "ether") 
