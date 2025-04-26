@@ -17,7 +17,7 @@ Geth 실행:
 
 Geth 콘솔 명령어: 
     geth console: Geth 노드를 실행하면서 동시에 JavaScript 콘솔에 접속하는 방법이다.
-    geth attach http://127.0.0.1:8545 : 이미 실행 중인 Geth 노드에 RPC 서버가 활성화되어 있을 때, 해당 노드에 연결하는 방법이다.
+    geth attach http://127.0.0.1:8545: 이미 실행 중인 Geth 노드에 RPC 서버가 활성화되어 있을 때, 해당 노드에 연결하는 방법이다.
 
 Geth 실행 설정 파일을 지정:
     geth --config geth-config.toml
@@ -41,7 +41,7 @@ Geth에서 가비지 컬렉션(Garbage Collection) 모드 설정:
 Geth 실행 시, 계정을 잠금/해제:
     geth --datadir data --unlock 0 
     geth --datadir data --unlock 0 --password password: 비밀번호 파일로 잠금 해제
-    geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 보안상 위험이 있을 수 있는 계정 잠금 해제(특히 RPC를 통해 원격에서 잠금 해제하는 경우)를 허용
+    geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 계정을 잠금 해제(Unlock) 시 보안 검사를 생략하며, 개발 또는 테스트 환경에서 계정을 잠금 해제 후 채굴 또는 트랜잭션 서명을 허용할 때 사용한다.
 
 HTTP 프로토콜을 통해 노드와 통신:
     geth --http: HTTP RPC 서버 활성화
@@ -292,3 +292,121 @@ transaction 실습:
         1. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --allow-insecure-unlock
         2. pesonal.unlockAccount(eth.accounts[n], "1234', 0)
         3. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password
+
+transaction 구조
+    geth 코드 - TransactionArgs 구조체 확인:
+        go-ethereum\internal\ethapi\transaction_args.go, line: 42
+        type TransactionArgs struct {
+            From                 *common.Address `json:"from"` // 트랜잭션을 보내는 계정의 주소
+            To                   *common.Address `json:"to"` // 트랜잭션이 전달될 대상 계정의 주소
+            Gas                  *hexutil.Uint64 `json:"gas"` // 트랜잭션 실행에 사용할 가스 한도
+            GasPrice             *hexutil.Big    `json:"gasPrice"` // 가스당 지불할 가격
+            MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas"` // EIP-1559 이후 도입된 최대 가스 요금
+            MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas"` // 우선순위 수수료로, 채굴자에게 더 빨리 처리되도록 인센티브를 제공하는 금액
+            Value                *hexutil.Big    `json:"value"` // 전송할 이더 또는 토큰의 양
+            Nonce                *hexutil.Uint64 `json:"nonce"` // 계정의 트랜잭션 순서 번호
+
+            // We accept "data" and "input" for backwards-compatibility reasons.
+            // "input" is the newer name and should be preferred by clients.
+            // Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
+            Data  *hexutil.Bytes `json:"data"` // 트랜잭션에 포함된 데이터
+            Input *hexutil.Bytes `json:"input"` // 더 최신 이름이며, 호환성을 위해 둘 다 지원
+
+            // Introduced by AccessListTxType transaction.
+            AccessList *types.AccessList `json:"accessList,omitempty"` // EIP-2930에서 도입된 접근 목록으로, 특정 계정 또는 저장소에 대한 접근 권한을 미리 지정하여 가스 비용을 절감할 수 있음
+            ChainID    *hexutil.Big      `json:"chainId,omitempty"` // 체인 식별자
+
+            // For BlobTxType
+            BlobFeeCap *hexutil.Big  `json:"maxFeePerBlobGas"` // Blob 트랜잭션에서 사용되는 최대 Blob 가스 요금
+            BlobHashes []common.Hash `json:"blobVersionedHashes,omitempty"` // Blob 버전의 해시 목록
+
+            // For BlobTxType transactions with blob sidecar
+            Blobs       []kzg4844.Blob       `json:"blobs"` // Blob 데이터를 포함하는 필드
+            Commitments []kzg4844.Commitment `json:"commitments"` // Blob 관련 커밋먼트 데이터
+            Proofs      []kzg4844.Proof      `json:"proofs"` // Blob 관련 증명 데이터
+
+            // For SetCodeTxType
+            AuthorizationList []types.SetCodeAuthorization `json:"authorizationList"` // 코드 설정 트랜잭션에서 사용할 승인 목록
+
+            // This configures whether blobs are allowed to be passed.
+            blobSidecarAllowed bool // Blob 사이드카를 허용할지 여부를 결정하는 플래그
+        }
+
+    geth 코드 - SendTransaction 함수 확인:
+        go-ethereum\internal\ethapi\api.go, line: 1485
+
+    geth 코드 - ToTransaction 함수 확인:
+        go-ethereum\internal\ethapi\transaction_args.go, line: 471
+
+    geth 코드 - Transaction 구조체 확인:
+        go-ethereum\core\types\transaction.go, line: 46
+        const (
+            LegacyTxType     = 0x00 // 기존 방식의 트랜잭션 타입
+            AccessListTxType = 0x01 // EIP-2930에서 도입된 접근 목록(Access List)을 사용하는 트랜잭션 타입
+            DynamicFeeTxType = 0x02 // EIP-1559에서 도입된 동적 수수료(가스비) 트랜잭션 타입
+            BlobTxType       = 0x03 // 블롭(Blob) 트랜잭션 타입으로, 아직 표준화 또는 특정 용도로 사용될 수 있음
+            SetCodeTxType    = 0x04 // 코드 설정(코드 배포 또는 변경)용 트랜잭션 타입
+        )
+
+        // Transaction is an Ethereum transaction.
+        type Transaction struct {
+            inner TxData    // 트랜잭션의 핵심 데이터(컨센서스에 필요한 내용)
+            time  time.Time // 트랜잭션이 처음 로컬에서 감지된 시간
+
+            // caches
+            hash atomic.Pointer[common.Hash] // 트랜잭션의 해시값을 안전하게 저장
+            size atomic.Uint64 // 트랜잭션 크기(바이트 단위)를 저장
+            from atomic.Pointer[sigCache] // 송신자 주소 또는 서명 관련 캐시를 저장
+        }
+
+    특정 트랜잭션의 원시 데이터 조회:
+        해당하는 트랜잭션의 원시 데이터(바이너리 또는 RLP 인코딩된 형식)를 반환
+            RLP(Recursive Length Prefix) 인코딩: 이더리움(ethereum) 네트워크에서 주로 트랜잭션, 블록, 계정 상태 등 이더리움의 핵심 데이터를 인코딩하는 데 활용
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+        eth.getRawTransaction("0xacf4b603260de56b7b57f55f5e3981a7aa607c00b6206dd2062cc6fa958639f9")
+
+    geth 코드 - Receipt 구조체 확인:
+        거래 영수증을 나타내는 데이터 구조
+        go-ethereum\core\types\receipt.go, line: 52
+        type Receipt struct {
+            // Consensus fields: These fields are defined by the Yellow Paper
+            Type              uint8  `json:"type,omitempty"` // 영수증의 유형을 나타내는 값
+            PostState         []byte `json:"root"` // 거래 후 상태 루트 또는 상태 데이터
+            Status            uint64 `json:"status"` // 거래의 성공 또는 실패 상태를 나타내는 값
+            CumulativeGasUsed uint64 `json:"cumulativeGasUsed" gencodec:"required"` // 해당 블록 내에서 지금까지 사용된 가스 총량
+            Bloom             Bloom  `json:"logsBloom"         gencodec:"required"` // 로그 블룸 필터로, 로그 검색에 사용
+            Logs              []*Log `json:"logs"              gencodec:"required"` // 거래와 관련된 로그 목록
+
+            // Implementation fields: These fields are added by geth when processing a transaction.
+            TxHash            common.Hash    `json:"transactionHash" gencodec:"required"` // 거래의 해시값
+            ContractAddress   common.Address `json:"contractAddress"` // 이 거래로 생성된 계약 주소(계약 생성 시에만 유효)
+            GasUsed           uint64         `json:"gasUsed" gencodec:"required"` // 해당 거래에 실제로 사용된 가스 양
+            EffectiveGasPrice *big.Int       `json:"effectiveGasPrice"` // required, but tag omitted for backwards compatibility // 거래에 적용된 유효 가스 가격
+            BlobGasUsed       uint64         `json:"blobGasUsed,omitempty"` // Blob(데이터 블록) 사용 가스량(선택적)
+            BlobGasPrice      *big.Int       `json:"blobGasPrice,omitempty"` // Blob에 대한 가스 가격(선택적)
+
+            // Inclusion information: These fields provide information about the inclusion of the
+            // transaction corresponding to this receipt.
+            BlockHash        common.Hash `json:"blockHash,omitempty"` // 거래가 포함된 블록의 해시값
+            BlockNumber      *big.Int    `json:"blockNumber,omitempty"` // 거래가 포함된 블록의 번호
+            TransactionIndex uint        `json:"transactionIndex"` // 블록 내에서 거래의 인덱스 위치
+        }
+
+    특정 트랜잭션 영수증을 조회:
+        eth.getTransactionReceipt("0xacf4b603260de56b7b57f55f5e3981a7aa607c00b6206dd2062cc6fa958639f9")
+        {
+            blockHash: "0x80effca69dc4dfec4a1045db271bfc6cb7685102d9e2caabf4c42a5918abfc0c",
+            blockNumber: 906,
+            contractAddress: null,
+            cumulativeGasUsed: 21000,
+            effectiveGasPrice: 1000000000,
+            from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            gasUsed: 21000,
+            logs: [],
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",      
+            status: "0x1",
+            to: "0xd817fee0b5393a005dc639d2abae4896ba38dcd3",
+            transactionHash: "0xacf4b603260de56b7b57f55f5e3981a7aa607c00b6206dd2062cc6fa958639f9",
+            transactionIndex: 0,
+            type: "0x0"
+        }
