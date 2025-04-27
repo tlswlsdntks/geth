@@ -10,12 +10,12 @@
     "petersburgBlock": 0,
     "istanbulBlock": 0,
     "berlinBlock": 0,
+    "londonBlock": 0,
     "ethash": {}
   },
   "difficulty": "1",
   "gasLimit": "8000000",
   "alloc": {
-    "7df9a875a174b3bc565e6424a0050ebc1b2d1d82": { "balance": "300000" },
-    "f41c74c9ae680c1aa78f42e5647a62f353b7bdde": { "balance": "400000" }
+    "d817fee0b5393a005dc639d2abae4896ba38dcd3": { "balance": "1000000000" }
   }
 }

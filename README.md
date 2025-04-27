@@ -237,7 +237,7 @@ metamask 에 rpc 연결:
 
 transaction 실습:
     트랜잭션을 보내는 명령어:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
 
     트랜잭션을 확인하는 명령어:
         eth.getTransaction("0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c")
@@ -247,7 +247,7 @@ transaction 실습:
             chainId: "0x3039", // 블록체인 네트워크의 ID
             from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b", // 거래를 발신한 계정(주소)
             gas: 21000, // 거래 수행에 필요한 가스의 양(기본 송금 거래는 21000 가스)
-            gasPrice: 1000000000, // 가스 가격(단위: wei)
+            gasPrice: 1000000000, // 가스 가격(단위: wei), 10^9 wei이며, 이는 1 gwei을 의미
             hash: "0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c", // 이 거래의 고유한 해시값
             input: "0x", // 거래에 포함된 데이터
             nonce: 3, // 발신 계정이 생성된 이후 보낸 거래의 순서 번호
@@ -263,7 +263,7 @@ transaction 실습:
     전송되지 않은 트랜잭션을 확인하는 명령어:
         miner.stop()
         eth.mining
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20,"ether")})
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether")})
         eth.pendingTransactions
         [{
             blockHash: null,
@@ -288,7 +288,7 @@ transaction 실습:
         eth.pendingTransactions
 
     16진수 데이터를 포함하여 트랜잭션을 보내는 방법:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20,"ether"), data: "0x01234567"})
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether"), data: "0x01234567"})
         eth.getTransaction("0x3be93044e3b6e25ad7ec4d9352c59038f6ee2437512b6146a2403f81bd12726c")
         {
             blockHash: "0xe71d735029f051512ac949756d9ebb3d00ac6bde8ab251e08da5116040948b57",
@@ -384,7 +384,7 @@ transaction 구조
     특정 트랜잭션의 원시 데이터 조회:
         해당하는 트랜잭션의 원시 데이터(바이너리 또는 RLP 인코딩된 형식)를 반환
             RLP(Recursive Length Prefix) 인코딩: 이더리움(ethereum) 네트워크에서 주로 트랜잭션, 블록, 계정 상태 등 이더리움의 핵심 데이터를 인코딩하는 데 활용
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
         eth.getRawTransaction("0xacf4b603260de56b7b57f55f5e3981a7aa607c00b6206dd2062cc6fa958639f9")
 
     geth 코드 - Receipt(거래 영수증을 나타내는 데이터) 구조체 확인:
@@ -434,7 +434,7 @@ transaction 구조
 
 signature:
     트랜잭션 서명:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10,"ether")})
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
         eth.getTransaction("0x9c36184f0c828f62a2f139428b89a1ff7837eaa412d480dc741dadcdd3e9e0b1")
         eth.signTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000, nonce: 9})
         {
@@ -463,3 +463,179 @@ signature:
         eth.sendRawTransaction("0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb57
         9a163028debe7899")
         eth.getTransaction("0x5b867e6b436e8face24f578c118421a5871ffd673a4a9b623e5d518b7c11c598")
+
+Gas:
+    사용된 가스 양 확인:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000})
+        eth.getTransaction("0xfac9054639e9bb1c71f41058c17c13625640f7e86a88eace39e64b92bc048141")
+        eth.getBlock(1313)
+        {
+            difficulty: 187573,
+            extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
+            gasLimit: 28815225, // 블록 내에서 사용할 수 있는 최대 가스(이더리움 트랜잭션 수수료)의 양
+            gasUsed: 21000, // 해당 블록에서 실제로 사용된 가스 양, 여기서는 21000으로, 일반적인 표준 트랜잭션의 가스 소비량
+            hash: "0x03ab5bd8c78f8a14ac2d0a8db41a3e46ddc7edb04bb02679954e1d737ae338e4",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            mixHash: "0xe4cbea6126f9c8ea11b2ca07ccbf98797d8c63cb6bc6274ecf18d6f97a539533",
+            nonce: "0x7c0365f248114679",
+            number: 1313,
+            parentHash: "0x396495cd753738dc6f842d9f0a76b852802f543479c4c8f3c6283124eb1eefe9",
+            receiptsRoot: "0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2",
+            sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+            size: 655,
+            stateRoot: "0x1dee9c93797835afb3d6934c1258922fc84bc1fe3882724abdbc4fcb7d2826c2",
+            timestamp: 1745722068,
+            totalDifficulty: 214471277,
+            transactions: ["0xfac9054639e9bb1c71f41058c17c13625640f7e86a88eace39e64b92bc048141"],
+            transactionsRoot: "0xd0f214ccc2e12cacb0f0d0b5c4b122946969e86e449590de48ee7b0ef46d8c1c",
+            uncles: []
+        }
+
+    설정된 최대 한도(1.00 이더)를 초과하는 거래 수수료:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 1000000, gasPrice: 1000000000001})
+        geth 코드 - 거래 수수료 최대 한도 확인:
+            go-ethereum\internal\ethapi\api.go, line: 1858
+            go-ethereum\eth\ethconfig\config.go, line: 71
+
+    일반적인 표준 트랜잭션의 가스(21000) 를 초과하는 경우 반환:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 31000, gasPrice: 1000000000})
+        eth.getTransaction("0x07ffd118c5e8a6914128f452a77bf322f48c4b295c2294bb5a038dc62703e236")
+        eth.getBlock(1567)
+        {
+            difficulty: 208821,
+            extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
+            gasLimit: 30000000,
+            gasUsed: 21000, // 일반적인 표준 트랜잭션의 가스(21000)로 반환
+            hash: "0xf444db70367e11916246898b6b05ac8120967dcdaba7e2d82b12b92e6b21214a",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            mixHash: "0xe4c4fee7d40146e07358f787295f635528b5fb01f83be6360bce7d9628afb3a9",
+            nonce: "0x2f8d0ac952dc0f49",
+            number: 1567,
+            parentHash: "0x79555f37bfe7c37b082aecf40ec2a7a4e44e457f331344c55eefb9ce4ebd5454",
+            receiptsRoot: "0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2",
+            sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+            size: 656,
+            stateRoot: "0xb38c0f7036e9f2a42f136ab4d318aa0ca6b22b8f4f1109313965677e0a14dc88",
+            timestamp: 1745723098,
+            totalDifficulty: 264789842,
+            transactions: ["0x07ffd118c5e8a6914128f452a77bf322f48c4b295c2294bb5a038dc62703e236"],
+            transactionsRoot: "0x192fb95b1cbe304f8ffed350c2cde196a05b2dcc43664332ae2184ba8effc5cb",
+            uncles: []
+        }
+
+    London Hard Fork:
+        기존에는 사용자들이 채굴자에게 직접 수수료를 지불하는 방식이었으나, EIP-1559는 기본 수수료(base fee)를 자동으로 조정하여 거래 수수료의 예측 가능성과 효율성을 높였다.
+        또한, 초과 수수료는 소각되어 이더리움의 공급량이 감소하는 효과도 있다.
+        genesis.json
+        {
+            "config": {
+                "chainId": 12345,
+                "homesteadBlock": 0,
+                "eip150Block": 0,
+                "eip155Block": 0,
+                "eip158Block": 0,
+                "byzantiumBlock": 0,
+                "constantinopleBlock": 0,
+                "petersburgBlock": 0,
+                "istanbulBlock": 0,
+                "berlinBlock": 0,
+                "londonBlock": 0, // London 하드포크 적용 블록 번호
+                "ethash": {}
+            },
+            "difficulty": "1",
+            "gasLimit": "8000000",
+            "alloc": { // 초기 계좌 잔액 할당 정보
+                "d817fee0b5393a005dc639d2abae4896ba38dcd3": { "balance": "1000000000" }
+            }
+        }
+
+    baseFeePerGas 확인:
+        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), gas: 21000, gasPrice: 1000000000})
+        eth.getTransaction("0xb0a305e907c6fdf7e01323f847787e937e8b70ca8ffbaa5073f77a1c3cffff7c")
+        eth.getBlock(57)
+        {
+            baseFeePerGas: 494837, // 거래를 처리하는 데 필요한 기본 가스 비용
+            difficulty: 134615,
+            extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
+            gasLimit: 8457626,
+            gasUsed: 21000,
+            hash: "0xe270566d5db15874908b9488f5e10c8df63546e416e189433452b803675bac31",
+            logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+            mixHash: "0x951f9430b56e1539abf3576d275c13c808a6fd1d1b634cd28c7007bbf8332494",
+            nonce: "0x6fa63d153c219923",
+            number: 57,
+            parentHash: "0x7c66dd568d9e89fd389a349ac76d491350cf368bf70730edbd9c9a8f32cb5da5",
+            receiptsRoot: "0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2",
+            sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+            size: 656,
+            stateRoot: "0x60c9f241f1c02133ae133f65a69d06c0af42ab04dea91d449bcd9174e7ffec89",
+            timestamp: 1745724590,
+            totalDifficulty: 7571477,
+            transactions: ["0xb0a305e907c6fdf7e01323f847787e937e8b70ca8ffbaa5073f77a1c3cffff7c"],
+            transactionsRoot: "0x11d7af1070f43b6bf507309379737972c276733b5afc7e8c65917ef3913223a9",
+            uncles: []
+        }
+
+        geth 코드 - CalcBaseFee 함수 확인:
+            go-ethereum\consensus\misc\eip1559\eip1559.go, line: 56
+        
+        geth 코드 - DynamicFeeTx 구조체 확인:
+            go-ethereum\core\types\tx_dynamic_fee.go, line: 28
+            type DynamicFeeTx struct {
+                ChainID    *big.Int
+                Nonce      uint64
+                GasTipCap  *big.Int // a.k.a. maxPriorityFeePerGas, 채굴자에게 지급하는 수수료
+                GasFeeCap  *big.Int // a.k.a. maxFeePerGas, 최대 전체 수수료(가스비 한도), 거래를 성공적으로        처리하려면 maxFeePerGas 는 적어도 baseFee 보다 높거나 같아야 한다.
+                Gas        uint64
+                To         *common.Address `rlp:"nil"` // nil means contract creation
+                Value      *big.Int
+                Data       []byte
+                AccessList AccessList
+
+                // Signature values
+                V *big.Int
+                R *big.Int
+                S *big.Int
+            }
+            
+        Total Gas Fee(총 가스 수수료):
+            (baseFee + maxPriorityFeePerGas) * gasUsed
+            eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), maxFeePerGasmax: 1000000000, maxPriorityFeePerGas: 1000000000})
+            eth.getTransaction("0x0a14f9a3e543658c3de30b4a3eb47b8fa8472f1fa8ae10e8814a15dcc26dd71a")
+            eth.getBlock(324)
+            {
+                baseFeePerGas: 7,
+                difficulty: 152397,
+                extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
+                gasLimit: 10975235,
+                gasUsed: 21000,
+                hash: "0x0884d55f9b1c6d2faa4616e7dbaf26d849cafc7365b6ab9721358806b57001f3",
+                logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+                mixHash: "0xc43d335252207433951f0c0c909f2dc3ca867c4e9705171fd98b78239ebc7112",
+                nonce: "0x16c081d87f678c67",
+                number: 324,
+                parentHash: "0xc6af7a8f2b46d93c51992dd815422ec23f031dd7e015d49f42ca25a38008b56b",
+                receiptsRoot: "0xf78dfb743fbd92ade140711c8bbc542b5e307f0ab7984eff35d751969fe57efa",
+                sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+                size: 665,
+                stateRoot: "0x34f1294bdbfa37e639fc16e446fbb6dad183892751816ade1031f89023ac5273",
+                timestamp: 1745725364,
+                totalDifficulty: 45839255,
+                transactions: ["0x0a14f9a3e543658c3de30b4a3eb47b8fa8472f1fa8ae10e8814a15dcc26dd71a"],
+                transactionsRoot: "0x90b396e3f184e1054f71f2814fad5df9e93e7bab4dc2f18ce888b8ab8ec57731",
+                uncles: []
+            }
+
+        Total Gas Fee = (baseFee + maxPriorityFeePerGas) * gasUsed
+            baseFeePerGas = 7 (이 값은 가스 단위가 wei가 아니기 때문에, 실제 계산 시 wei 단위로 변환 필요)
+            maxPriorityFeePerGas = 1,000,000,000 wei
+            gasUsed = 21,000
+            Total Gas Fee = 1,000,000,007 * 21,000 wei
+            즉, 약 21,000,000,147,000 wei 가 된다.
+            
+            이더(ETH) 로 환산 시, 21,000,000,147,000 wei ÷ 10^18
+            21,000,000,147,000 ÷ 1,000,000,000,000,000,000 = 0.000021 이더로 표현된다.
