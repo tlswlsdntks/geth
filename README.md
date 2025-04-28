@@ -663,6 +663,9 @@ solidity 컨트랙트 배포:
                     return storedData;
                 }
             }
+
+        solidity compiler:
+            complier > 0.8.7+commit.e28d00a7    
     
         solidity contract 배포:
             metamask 동기화:
@@ -819,4 +822,73 @@ solidity 컨트랙트 배포:
                 value: 0
             }
             
+evm 과 opcode:
+    EVM(Ethereum Virtual Machine):
+        이더리움 네트워크 내에서 스마트 계약을 실행하고 분산 애플리케이션을 구동하는 가상화된 컴퓨팅 환경
         
+        geth 코드 - Evm version 확인:
+            go-ethereum\core\vm\interpreter.go, line: 105
+
+    opcode(operation code):
+        EVM 이 이해하고 실행할 수 있는 저수준의 명령어 집합
+
+        geth 코드 - opcode 확인:
+            go-ethereum\core\vm\opcodes.go, line: 34
+
+        opcode 테이블:
+            https://github.com/crytic/evm-opcodes
+
+        트랜잭션의 내부 실행 과정을 단계별로 추적하여 디버깅:
+            debug.traceTransaction("0xc0f2056d868645fe7e80afc0d6097b8997236ac8731a866cb15e6537a8bb78f8")
+            {
+                failed: false,
+                gas: 125677,
+                returnValue: "608060405234801561001057600080fd5b50600436106100365760003560e01c806360fe47b11461003b5780636d4ce63c14610057575b600080fd5b6100556004803603810190610050919061009d565b610075565b005b61005f61007f565b60405161006c91906100d9565b60405180910390f35b8060008190555050565b60008054905090565b60008135905061009781610103565b92915050565b6000602082840312156100b3576100b26100fe565b5b60006100c184828501610088565b91505092915050565b6100d3816100f4565b82525050565b60006020820190506100ee60008301846100ca565b92915050565b6000819050919050565b600080fd5b61010c816100f4565b811461011757600080fd5b5056fea2646970667358221220422e225cd4efcb12ae372d7d760fa3d9ccebc8c2f724d69b2bc58cd7193c7cc064736f6c63430008070033",
+                structLogs: [{
+                    depth: 1,
+                    gas: 67317,
+                    gasCost: 3,
+                    op: "PUSH1", // 0x60
+                    pc: 0,
+                    stack: []
+                }, {
+                    depth: 1,
+                    gas: 67314,
+                    gasCost: 3,
+                    op: "PUSH1", // 0x60
+                    pc: 2,
+                    stack: ["0x80"]
+                }, {
+                    depth: 1,
+                    gas: 67311,
+                    gasCost: 12,
+                    op: "MSTORE", // 0x52
+                    pc: 4,
+                    stack: ["0x80", "0x40"]
+                }, {
+                    depth: 1,
+                    gas: 67299,
+                    gasCost: 2,
+                    op: "CALLVALUE",
+                    pc: 5,
+                    stack: []
+                }, {
+                    depth: 1,
+                    gas: 67297,
+                    gasCost: 3,
+                    op: "DUP1",
+                    pc: 6,
+                    stack: ["0x0"]
+                }, 
+                .
+                .
+                .
+                {
+                    depth: 1,
+                    gas: 67200,
+                    gasCost: 0,
+                    op: "RETURN",
+                    pc: 30,
+                    stack: ["0x150", "0x0"]
+                }]
+            }
