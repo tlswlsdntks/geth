@@ -175,7 +175,7 @@ geth 코드 - 블록의 구조 확인:
 
 엉클 블록:
     채굴자가 정식 블록(메인 체인에 포함된 블록)을 채굴하는 것 외에, 경쟁 과정에서 유효하지만 최종 블록으로 채택되지 않은 블록을 의미한다.
-    이더리움 1.0에서는 엉클 블록 채굴자에게도 일정 비율의 보상(75%)이 지급되어, 네트워크의 안정성과 참여를 유도하는 중요한 역할
+    이더리움 1.0 에서는 엉클 블록 채굴자에게도 일정 비율의 보상(75%)이 지급되어, 네트워크의 안정성과 참여를 유도하는 중요한 역할
 
 블록 분기(Fork):
     블록체인 네트워크에서 기존의 블록체인에서 분리되어 새로운 체인 또는 버전이 만들어지는 현상이다.
@@ -639,3 +639,184 @@ Gas:
             
             이더(ETH) 로 환산 시, 21,000,000,147,000 wei ÷ 10^18
             21,000,000,147,000 ÷ 1,000,000,000,000,000,000 = 0.000021 이더로 표현된다.
+
+solidity 컨트랙트 배포:
+    Solidity 공식 문서:
+        https://docs.soliditylang.org/en/v0.8.17/introduction-to-smart-contracts.html#a-simple-smart-contract
+        
+    Remix IDE (Solidity IDE):
+        Remix IDE 설치:
+            https://remix.ethereum.org/#lang=en&optimize=false&runs=200&evmVersion=null&version=soljson-v0.8.7+commit.e28d00a7.js
+    
+        storage.sol 파일 생성:
+            // SPDX-License-Identifier: GPL-3.0
+            pragma solidity >=0.4.16 <0.9.0;
+
+            contract SimpleStorage {
+                uint storedData;
+
+                function set(uint x) public {
+                    storedData = x;
+                }
+
+                function get() public view returns (uint) {
+                    return storedData;
+                }
+            }
+    
+        solidity contract 배포:
+            metamask 동기화:
+                Remix IDE > injected Provier - MetaMask
+
+            solidity contract 배포, 트랜잭션의 영수증 조회: 
+                depoly
+                metamask > 계약 배포 > 트랜잭션 ID 복사
+                eth.getTransaction("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
+                eth.getTransactionReceipt("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
+                {
+                    blockHash: "0xd3357635470b3c618fb4779eba7c62fafbcb1125e15b4e4c6ddfdf7e59e8c0e5",
+                    blockNumber: 877,
+                    contractAddress: "0x37d0b67cc1fc7e71efc6cb4560ed4992a2705d98", // 컨트랙트 주소, Remix IDE의 Deployed Contracts 와 동일한 값
+                    cumulativeGasUsed: 125677, // 누적 가스 사용량
+                    effectiveGasPrice: 1000000007, // 실제 가스 가격
+                    from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+                    gasUsed: 125677, // 실제로 소모된 가스
+                    logs: [],
+                    logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                    status: "0x1",
+                    to: null,
+                    transactionHash: "0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691",
+                    transactionIndex: 0,
+                    type: "0x2"
+                }
+
+        function selector 사용:
+            Remix IDE > Set: 1
+            eth.getTransaction("0x7db828ec2fd80121f0cd08a0d8c1221b42295acd2e66552640ea7fb6edd50982")
+            {
+                accessList: [],
+                blockHash: "0x094bd5ccc71ec47b0e7aead795a2bdbd91df436361c99c973c6508be00e3a061",
+                blockNumber: 992,
+                chainId: "0x3039",
+                from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b", // 거래를 발신한 계정(주소)
+                gas: 26602,
+                gasPrice: 1000000007,
+                hash: "0x7db828ec2fd80121f0cd08a0d8c1221b42295acd2e66552640ea7fb6edd50982",
+                input: "0x60fe47b10000000000000000000000000000000000000000000000000000000000000001",
+                maxFeePerGas: 1000000007,
+                maxPriorityFeePerGas: 1000000007,
+                nonce: 9,
+                r: "0x1341c9a71f7f2a9a3b572f8ff092732c957f2ca6fb2200f2d961b9474a355f1c",
+                s: "0x5a6d94fccd187e614bbc51c98623d496f5af0e6fff3aa093813a5fbafa07de8b",
+                to: "0x37d0b67cc1fc7e71efc6cb4560ed4992a2705d98", // 컨트랙트 주소
+                transactionIndex: 0,
+                type: "0x2",
+                v: "0x1",
+                value: 0
+            }
+
+        geth 에서 function selector 사용:
+            eth.sendTransaction({from: eth.accounts[0], to: "0x37d0b67cc1fc7e71efc6cb4560ed4992a2705d98", data: "0x60fe47b10000000000000000000000000000000000000000000000000000000000000009"})
+
+    solcjs (Solidity 컴파일러):
+        solcjs 설치:
+            npm install -g solc@0.8.17
+
+        storage.sol 파일 생성:
+            // SPDX-License-Identifier: GPL-3.0
+            pragma solidity >=0.4.16 <0.9.0;
+
+            contract SimpleStorage {
+                uint storedData;
+
+                function set(uint x) public {
+                    storedData = x;
+                }
+
+                function get() public view returns (uint) {
+                    return storedData;
+                }
+            }
+
+        solidity contract 배포:
+            solidity contract 컴파일:
+                solcjs --bin --abi ./storage.sol
+
+            storage_sol_SimpleStorage.abi:
+                스마트 계약의 인터페이스를 정의하는 JSON 형식의 데이터
+
+            storage_sol_SimpleStorage.bin:
+                컴파일된 스마트 계약의 바이트코드(바이너리 코드)
+
+            geth attach "http://127.0.0.1:8545"
+
+            let storageAbi = {storage_sol_SimpleStorage.abi}
+            storageAbi
+
+            storage_sol_SimpleStorage.bin 16진수 표기 필수:
+                let storageBin = "{'0x'storage_sol_SimpleStorage..bin}"
+            storageBin
+
+            let storageContract = eth.contract(storageAbi)
+            storageContract
+            {
+                abi: [{
+                    inputs: [],
+                    name: "get",
+                    outputs: [{...}],
+                    stateMutability: "view",
+                    type: "function"
+                }, {
+                    inputs: [{...}],
+                    name: "set",
+                    outputs: [],
+                    stateMutability: "nonpayable",
+                    type: "function"
+                }],
+                address: undefined,
+                transactionHash: "0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01"
+            }
+            eth.getTransactionReceipt("0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01")
+            {
+                blockHash: "0x2c52e13890c49bc49c6373e7f0cf62b15456c2acfd9e76d2a243b39cd8825af6",
+                blockNumber: 2048,
+                contractAddress: "0xd28e16f8e079d64e32a50e35f90bf11f40be4deb",
+                cumulativeGasUsed: 125653,
+                effectiveGasPrice: 1000000007,
+                from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+                gasUsed: 125653,
+                logs: [],
+                logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                status: "0x1",
+                to: null,
+                transactionHash: "0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01",
+                transactionIndex: 0,
+                type: "0x2"
+            }
+
+        Remix IDE 에서 contract 사용:
+            Load contract from Address: 0xd28e16f8e079d64e32a50e35f90bf11f40be4deb > At Address > Set
+            eth.getTransaction("0x04500564ec8ac31769685c9454b745924e14602de7ba12ae815811610c635c27")
+            {
+                accessList: [],
+                blockHash: "0xa9f3cbab7ca47ecaa79b07fb649a8cdad53492063455c13653ef97c4dcb47a8b",
+                blockNumber: 2119,
+                chainId: "0x3039",
+                from: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",
+                gas: 26602,
+                gasPrice: 1000000007,
+                hash: "0x04500564ec8ac31769685c9454b745924e14602de7ba12ae815811610c635c27",
+                input: "0x60fe47b10000000000000000000000000000000000000000000000000000000000000004",
+                maxFeePerGas: 1000000007,
+                maxPriorityFeePerGas: 1000000007,
+                nonce: 21,
+                r: "0xb2c732d489a0a363c99d8fc8c0613e681fa7341545f82b71bff238017802cd8e",
+                s: "0x2bd0dbe4b5d434eb4c7aafbaee535de0b77bccc8ec0d9dc107563b46d4c4542e",
+                to: "0xd28e16f8e079d64e32a50e35f90bf11f40be4deb",
+                transactionIndex: 0,
+                type: "0x2",
+                v: "0x0",
+                value: 0
+            }
+            
+        
