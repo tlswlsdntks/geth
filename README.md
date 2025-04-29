@@ -1,82 +1,96 @@
-1.10.26 버전 기준이며, 상위 버전은 ethash(Ethereum 1.0을 위해 만들어진 PoW 알고리즘)가 작동하지 않는다.
+주의 사항:
+    1.10.26 버전 기준이며, 상위 버전은 ethash(Ethereum 1.0을 위해 만들어진 PoW 알고리즘)가 작동하지 않는다.
 
 체인 스토리지 초기화: 
-    geth init --datadir data genesis.json
+    $ geth init --datadir data genesis.json
 
 Geth 실행: 
-    geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" (console)
+    $ geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" (console)
 
 계정 생성: 
-    geth --datadir data account new 
+    $ geth --datadir data account new 
 
 계정 목록: 
-    geth --datadir data account list
+    $ geth --datadir data account list
 
 계정 비밀번호 변경: 
-    geth --datadir data account update {인덱스}
+    $ geth --datadir data account update {인덱스}
 
 Geth 콘솔 명령어: 
-    geth console: Geth 노드를 실행하면서 동시에 JavaScript 콘솔에 접속하는 방법이다.
-    geth attach http://127.0.0.1:8545: 이미 실행 중인 Geth 노드에 RPC 서버가 활성화되어 있을 때, 해당 노드에 연결하는 방법이다.
+    $ geth console: 
+        Geth 노드를 실행하면서 동시에 JavaScript 콘솔에 접속하는 방법이다.
+    $ geth attach http://127.0.0.1:8545:
+        이미 실행 중인 Geth 노드에 RPC 서버가 활성화되어 있을 때, 해당 노드에 연결하는 방법이다.
 
 Geth 실행 설정 파일을 지정:
-    geth --config geth-config.toml
+    $ geth --config geth-config.toml
 
 블록체인 데이터 디렉토리를 지정:
-    geth --datadir data
+    $ geth --datadir data
 
 노드의 동기화 방식을 지정:
-    geth --syncmode "full": 전체 블록체인 데이터를 모두 다운로드하고 검증한다. 가장 안전하지만 시간이 오래 걸린다.
-    geth --syncmode "snap": 전체 블록체인 데이터의 다운로드 대신, 최신 상태의 스냅샷을 다운로드하여 빠르게 노드를 동기화한다.
-    geth --syncmode "light": 경량 노드로, 전체 블록체인 데이터를 저장하지 않고 필요한 정보만 요청하여 동작한다.
+    $ geth --syncmode "full": 
+        전체 블록체인 데이터를 모두 다운로드하고 검증한다. 가장 안전하지만 시간이 오래 걸린다.
+    $ geth --syncmode "snap": 
+        전체 블록체인 데이터의 다운로드 대신, 최신 상태의 스냅샷을 다운로드하여 빠르게 노드를 동기화한다.
+    $ geth --syncmode "light": 
+        경량 노드로, 전체 블록체인 데이터를 저장하지 않고 필요한 정보만 요청하여 동작한다.
 
 Geth에서 가비지 컬렉션(Garbage Collection) 모드 설정:
-    geth --gcmode "archive": 체인 데이터를 완전히 저장하여, 과거의 상태를 조회하거나 분석하는 데 유용하다.
+    $ geth --gcmode "archive": 
+        체인 데이터를 완전히 저장하여, 과거의 상태를 조회하거나 분석하는 데 유용하다.
 
 네트워크에 연결하여 Geth 실행:
-    geth --mainnet
-    geth --goerli
-    geth --sepolia
+    $ geth --mainnet
+    $ geth --goerli
+    $ geth --sepolia
 
 Geth 실행 시, 계정을 잠금/해제:
-    geth --datadir data --unlock 0 
-    geth --datadir data --unlock 0 --password password: 비밀번호 파일로 잠금 해제
-    geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 계정을 잠금 해제(Unlock) 시 보안 검사를 생략하며, 개발 또는 테스트 환경에서 계정을 잠금 해제 후 채굴 또는 트랜잭션 서명을 허용할 때 사용한다.
+    $ geth --datadir data --unlock 0 
+    $ geth --datadir data --unlock 0 --password password: 
+        비밀번호 파일로 잠금 해제
+    $ geth --datadir data --unlock 0 --password password --allow-insecure-unlock: 
+        계정을 잠금 해제(Unlock) 시 보안 검사를 생략하며, 개발 또는 테스트 환경에서 계정을 잠금 해제 후 채굴 또는 트랜잭션 서명을 허용할 때 사용한다.
 
 HTTP 프로토콜을 통해 노드와 통신:
-    geth --http: HTTP RPC 서버 활성화
-    geth --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net": API를 활성화
-    geth --http.corsdomain "*": CORS(교차 출처 리소스 공유) 정책을 설정하는 것으로, 모든 도메인(*)에서의 요청을 허용
-    geth --http.addr "0.0.0.0": HTTP 서버가 모든 네트워크 인터페이스(0.0.0.0)에서 요청을 수신하도록 설정
-    geth --http.port "8545: HTTP RPC 서버가 사용할 포트 번호를 지정(기본 포트: 8545)
+    $ geth --http: 
+        HTTP RPC 서버 활성화
+    $ geth --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net":
+        API를 활성화
+    $ geth --http.corsdomain "*":
+        CORS(교차 출처 리소스 공유) 정책을 설정하는 것으로, 모든 도메인(*)에서의 요청을 허용
+    $ geth --http.addr "0.0.0.0": 
+        HTTP 서버가 모든 네트워크 인터페이스(0.0.0.0)에서 요청을 수신하도록 설정
+    $ geth --http.port "8545: 
+        HTTP RPC 서버가 사용할 포트 번호를 지정(기본 포트: 8545)
 
 WebSocket 프로토콜을 통해 노드와 통신:
-    geth --ws
-    geth --ws.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net"
-    geth --ws.origins "*"
-    geth --ws.addr "0.0.0.0"
-    geth --ws.port "8546
+    $ geth --ws
+    $ geth --ws.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net"
+    $ geth --ws.origins "*"
+    $ geth --ws.addr "0.0.0.0"
+    $ geth --ws.port "8546
 
 Geth 실행(모든 도메인, 네트워크에서의 요청 및 수신 허용)
-    geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --http.addr "0.0.0.0" --http.corsdomain "*" (console)
+    $ geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --http.addr "0.0.0.0" --http.corsdomain "*" (console)
 
 블록넘버 확인:
-    eth.blockNumber
+    > eth.blockNumber
 
 마이닝(채굴) 시작/종료:
-    miner.start(1)
-    miner.stop()
+    > miner.start(1)
+    > miner.stop()
 
 블록체인 데이터 내보내기(Geth 종료상태):
-    geth --datadir data export backup 0 {8}
+    $ geth --datadir data export backup 0 {8}
 
 블록체인 데이터 삭제:
-    geth --datadir data removedb
-    eth.blockNumber 로 재확인
-    geth 폴더 삭제
+    $ geth --datadir data removedb
+    $ eth.blockNumber 로 재확인
+    $ geth 폴더 삭제
 
 블록체인 데이터 가져오기(Geth 종료상태):
-    geth --datadir data import backup
+    $ geth --datadir data import backup
 
 명령어 모음:
     띄어쓰기 두번 + 탭
@@ -88,7 +102,7 @@ address:
     private key > public key > address 순으로 파생되어 생성된다.
 
 address(계좌의 "주소") 생성:
-    personal.newAccount("0000")
+    > personal.newAccount("0000")
     일반적으로 비밀번호를 입력하는 부분은 문자열로 입력해야 하며, 숫자만 넣는 경우 오류가 발생할 수 있다.
 
 keystore(계좌를 안전하게 관리하는 "지갑"):
@@ -115,13 +129,13 @@ keystore(계좌를 안전하게 관리하는 "지갑"):
     }
 
 현재 노드의 기본 계정 또는 채굴 계정:
-    eth.coinbase
+    > eth.coinbase
 
 노드에 저장된 모든 계정 목록:
-    eth.accounts
+    > eth.accounts
 
 블록 번호 n번에 해당하는 블록의 정보:
-    eth.getBlock(n)
+    > eth.getBlock(n)
     {
         difficulty: 131648, // 블록 채굴 난이도
         extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773", // 블록에 포함된 임의 데이터
@@ -207,7 +221,7 @@ geth 코드 - 블록의 구조 확인:
 
 metamask 에 rpc 연결:
     1. Geth 실행(채굴 수행 설정, 계정 잠금 해제):
-        geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password --allow-insecure-unlock
+        $ geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password --allow-insecure-unlock
     2. metamask 확장 프로그램 설치
     3. metamask 회원가입/로그인
     2. 테스트 네트워크 표시 선택:
@@ -230,17 +244,17 @@ metamask 에 rpc 연결:
     6. 보내기/받기 
 
 현재 보유하고 있는 이더(ETH) 잔액 조회:
-    eth.getBalance("0c33043f0926e2e2467fca96117ebefbf86d660b")
+    > eth.getBalance("0c33043f0926e2e2467fca96117ebefbf86d660b")
 
 이더(ETH) 단위로 변환:
-    web3.fromWei(eth.getBalance("d817fee0b5393a005dc639d2abae4896ba38dcd3"), "ether") 
+    > web3.fromWei(eth.getBalance("d817fee0b5393a005dc639d2abae4896ba38dcd3"), "ether") 
 
 transaction 실습:
     트랜잭션을 보내는 명령어:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
 
     트랜잭션을 확인하는 명령어:
-        eth.getTransaction("0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c")
+        > eth.getTransaction("0xa9fa4c69e819eab15e7973145bc294579c7c0d7328f0491d604b651df2def27c")
         {
             blockHash: "0x5aee0282a3a00ba52f9553de8c1e4945dda82901cb1c1928bab9adabfb041c05", // 블록의 유일한 식별자 역할
             blockNumber: 744, // 블록의 순서
@@ -261,10 +275,10 @@ transaction 실습:
         }
 
     전송되지 않은 트랜잭션을 확인하는 명령어:
-        miner.stop()
-        eth.mining
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether")})
-        eth.pendingTransactions
+        > miner.stop()
+        > eth.mining
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether")})
+        > eth.pendingTransactions
         [{
             blockHash: null,
             blockNumber: null,
@@ -283,13 +297,13 @@ transaction 실습:
             v: "0x6095",
             value: 10000000000000000000
         }]
-        miner.start(1)
-        eth.mining
-        eth.pendingTransactions
+        > miner.start(1)
+        > eth.mining
+        > eth.pendingTransactions
 
     16진수 데이터를 포함하여 트랜잭션을 보내는 방법:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether"), data: "0x01234567"})
-        eth.getTransaction("0x3be93044e3b6e25ad7ec4d9352c59038f6ee2437512b6146a2403f81bd12726c")
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(20, "ether"), data: "0x01234567"})
+        > eth.getTransaction("0x3be93044e3b6e25ad7ec4d9352c59038f6ee2437512b6146a2403f81bd12726c")
         {
             blockHash: "0xe71d735029f051512ac949756d9ebb3d00ac6bde8ab251e08da5116040948b57",
             blockNumber: 855,
@@ -311,9 +325,9 @@ transaction 실습:
         https://explorer.popcateum.org/tx/0x9f9cd681bc94325f6252297e9d87e2384739a5984ea033c49645cfc36679be8e?network=Popcateum
 
     Error: authentication needed: password or unlock 처리:
-        1. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --allow-insecure-unlock
-        2. pesonal.unlockAccount(eth.accounts[n], "1234', 0)
-        3. geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password
+        1. $ geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --allow-insecure-unlock
+        2. $ geth --datadir data --http --http.api "admin, debug, web3, eth, txpool, personal, ethash, miner, net" --mine --miner.threads "1" --unlock 0 --password password
+        3. > pesonal.unlockAccount(eth.accounts[n], "1234', 0)
 
 transaction 구조
     geth 코드 - TransactionArgs 구조체 확인:
@@ -434,9 +448,9 @@ transaction 구조
 
 signature:
     트랜잭션 서명:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
-        eth.getTransaction("0x9c36184f0c828f62a2f139428b89a1ff7837eaa412d480dc741dadcdd3e9e0b1")
-        eth.signTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000, nonce: 9})
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether")})
+        > eth.getTransaction("0x9c36184f0c828f62a2f139428b89a1ff7837eaa412d480dc741dadcdd3e9e0b1")
+        > eth.signTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000, nonce: 9})
         {
             raw: "0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb579a163028debe7899",
             tx: {
@@ -460,15 +474,15 @@ signature:
         go-ethereum\core\types\transaction_test.go, line: 571
 
     서명된 트랜잭션 데이터 전송:
-        eth.sendRawTransaction("0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb57
+        > eth.sendRawTransaction("0xf86e09843b9aca0082520894d817fee0b5393a005dc639d2abae4896ba38dcd389056bc75e2d6310000080826095a04db0f3d1503218c516ccb9034b3c3054ceecea4d3aa327981653fcd2d84a84afa0041c841c10a0c04f6091873fd5bdd98f17534bd0a627bb57
         9a163028debe7899")
-        eth.getTransaction("0x5b867e6b436e8face24f578c118421a5871ffd673a4a9b623e5d518b7c11c598")
+        > eth.getTransaction("0x5b867e6b436e8face24f578c118421a5871ffd673a4a9b623e5d518b7c11c598")
 
 Gas:
     사용된 가스 양 확인:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000})
-        eth.getTransaction("0xfac9054639e9bb1c71f41058c17c13625640f7e86a88eace39e64b92bc048141")
-        eth.getBlock(1313)
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 21000, gasPrice: 1000000000})
+        > eth.getTransaction("0xfac9054639e9bb1c71f41058c17c13625640f7e86a88eace39e64b92bc048141")
+        > eth.getBlock(1313)
         {
             difficulty: 187573,
             extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
@@ -493,15 +507,15 @@ Gas:
         }
 
     설정된 최대 한도(1.00 이더)를 초과하는 거래 수수료:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 1000000, gasPrice: 1000000000001})
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 1000000, gasPrice: 1000000000001})
         geth 코드 - 거래 수수료 최대 한도 확인:
             go-ethereum\internal\ethapi\api.go, line: 1858
             go-ethereum\eth\ethconfig\config.go, line: 71
 
     일반적인 표준 트랜잭션의 가스(21000) 를 초과하는 경우 반환:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 31000, gasPrice: 1000000000})
-        eth.getTransaction("0x07ffd118c5e8a6914128f452a77bf322f48c4b295c2294bb5a038dc62703e236")
-        eth.getBlock(1567)
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(100, "ether"), gas: 31000, gasPrice: 1000000000})
+        > eth.getTransaction("0x07ffd118c5e8a6914128f452a77bf322f48c4b295c2294bb5a038dc62703e236")
+        > eth.getBlock(1567)
         {
             difficulty: 208821,
             extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
@@ -552,9 +566,9 @@ Gas:
         }
 
     baseFeePerGas 확인:
-        eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), gas: 21000, gasPrice: 1000000000})
-        eth.getTransaction("0xb0a305e907c6fdf7e01323f847787e937e8b70ca8ffbaa5073f77a1c3cffff7c")
-        eth.getBlock(57)
+        > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), gas: 21000, gasPrice: 1000000000})
+        > eth.getTransaction("0xb0a305e907c6fdf7e01323f847787e937e8b70ca8ffbaa5073f77a1c3cffff7c")
+        > eth.getBlock(57)
         {
             baseFeePerGas: 494837, // 거래를 처리하는 데 필요한 기본 가스 비용
             difficulty: 134615,
@@ -603,9 +617,9 @@ Gas:
             
         Total Gas Fee(총 가스 수수료):
             (baseFee + maxPriorityFeePerGas) * gasUsed
-            eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), maxFeePerGasmax: 1000000000, maxPriorityFeePerGas: 1000000000})
-            eth.getTransaction("0x0a14f9a3e543658c3de30b4a3eb47b8fa8472f1fa8ae10e8814a15dcc26dd71a")
-            eth.getBlock(324)
+            > eth.sendTransaction({from: eth.accounts[0], to: eth.accounts[1], value: web3.toWei(10, "ether"), maxFeePerGasmax: 1000000000, maxPriorityFeePerGas: 1000000000})
+            > eth.getTransaction("0x0a14f9a3e543658c3de30b4a3eb47b8fa8472f1fa8ae10e8814a15dcc26dd71a")
+            > eth.getBlock(324)
             {
                 baseFeePerGas: 7,
                 difficulty: 152397,
@@ -674,8 +688,8 @@ solidity 컨트랙트 배포:
             solidity contract 배포, 트랜잭션의 영수증 조회: 
                 depoly
                 metamask > 계약 배포 > 트랜잭션 ID 복사
-                eth.getTransaction("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
-                eth.getTransactionReceipt("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
+                > eth.getTransaction("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
+                > eth.getTransactionReceipt("0x0e963660c27424830b64ba1d23ac977aada6b6dc26fa7d13198f671262c4d691")
                 {
                     blockHash: "0xd3357635470b3c618fb4779eba7c62fafbcb1125e15b4e4c6ddfdf7e59e8c0e5",
                     blockNumber: 877,
@@ -695,7 +709,7 @@ solidity 컨트랙트 배포:
 
         function selector 사용:
             Remix IDE > Set: 1
-            eth.getTransaction("0x7db828ec2fd80121f0cd08a0d8c1221b42295acd2e66552640ea7fb6edd50982")
+            > eth.getTransaction("0x7db828ec2fd80121f0cd08a0d8c1221b42295acd2e66552640ea7fb6edd50982")
             {
                 accessList: [],
                 blockHash: "0x094bd5ccc71ec47b0e7aead795a2bdbd91df436361c99c973c6508be00e3a061",
@@ -719,11 +733,11 @@ solidity 컨트랙트 배포:
             }
 
         geth 에서 function selector 사용:
-            eth.sendTransaction({from: eth.accounts[0], to: "0x37d0b67cc1fc7e71efc6cb4560ed4992a2705d98", data: "0x60fe47b10000000000000000000000000000000000000000000000000000000000000009"})
+            > eth.sendTransaction({from: eth.accounts[0], to: "0x37d0b67cc1fc7e71efc6cb4560ed4992a2705d98", data: "0x60fe47b10000000000000000000000000000000000000000000000000000000000000009"})
 
     solcjs (Solidity 컴파일러):
         solcjs 설치:
-            npm install -g solc@0.8.17
+            $ npm install -g solc@0.8.17
 
         storage.sol 파일 생성:
             // SPDX-License-Identifier: GPL-3.0
@@ -743,7 +757,7 @@ solidity 컨트랙트 배포:
 
         solidity contract 배포:
             solidity contract 컴파일:
-                solcjs --bin --abi ./storage.sol
+                $ solcjs --bin --abi ./storage.sol
 
             storage_sol_SimpleStorage.abi:
                 스마트 계약의 인터페이스를 정의하는 JSON 형식의 데이터
@@ -751,17 +765,17 @@ solidity 컨트랙트 배포:
             storage_sol_SimpleStorage.bin:
                 컴파일된 스마트 계약의 바이트코드(바이너리 코드)
 
-            geth attach "http://127.0.0.1:8545"
+            $ geth attach "http://127.0.0.1:8545"
 
-            let storageAbi = {storage_sol_SimpleStorage.abi}
-            storageAbi
+            > let storageAbi = {storage_sol_SimpleStorage.abi}
+            > storageAbi
 
             storage_sol_SimpleStorage.bin 16진수 표기 필수:
-                let storageBin = "{'0x'storage_sol_SimpleStorage..bin}"
-            storageBin
+                > let storageBin = "{'0x'storage_sol_SimpleStorage..bin}"
+            > storageBin
 
-            let storageContract = eth.contract(storageAbi)
-            storageContract
+            > let storageContract = eth.contract(storageAbi)
+            > storageContract
             {
                 abi: [{
                     inputs: [],
@@ -779,7 +793,7 @@ solidity 컨트랙트 배포:
                 address: undefined,
                 transactionHash: "0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01"
             }
-            eth.getTransactionReceipt("0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01")
+            > eth.getTransactionReceipt("0x79745b97b5ccfa12f4fb0ed3a8531fa3ba9e3e36073753fa20c586fe972d0f01")
             {
                 blockHash: "0x2c52e13890c49bc49c6373e7f0cf62b15456c2acfd9e76d2a243b39cd8825af6",
                 blockNumber: 2048,
@@ -799,7 +813,7 @@ solidity 컨트랙트 배포:
 
         Remix IDE 에서 contract 사용:
             Load contract from Address: 0xd28e16f8e079d64e32a50e35f90bf11f40be4deb > At Address > Set
-            eth.getTransaction("0x04500564ec8ac31769685c9454b745924e14602de7ba12ae815811610c635c27")
+            > eth.getTransaction("0x04500564ec8ac31769685c9454b745924e14602de7ba12ae815811610c635c27")
             {
                 accessList: [],
                 blockHash: "0xa9f3cbab7ca47ecaa79b07fb649a8cdad53492063455c13653ef97c4dcb47a8b",
@@ -839,7 +853,7 @@ evm 과 opcode:
             https://github.com/crytic/evm-opcodes
 
         트랜잭션의 내부 실행 과정을 단계별로 추적하여 디버깅:
-            debug.traceTransaction("0xc0f2056d868645fe7e80afc0d6097b8997236ac8731a866cb15e6537a8bb78f8")
+            > debug.traceTransaction("0xc0f2056d868645fe7e80afc0d6097b8997236ac8731a866cb15e6537a8bb78f8")
             {
                 failed: false,
                 gas: 125677,
@@ -933,4 +947,50 @@ patricia trie:
 merkle patricia tree:
     블록체인 기술에서 데이터의 무결성과 효율적인 검증을 위해 사용되는 Merkle Tree와 Patricia Trie(혹은 Radix Tree)의 특징을 결합한 데이터 구조이다.
     
+levelDB:
+    이더리움에서 블록체인 데이터를 저장하는 데 사용되는 기본 데이터베이스이며, 이더리움 노드가 블록체인 상태, 트랜잭션 기록, 계정정보 등을 효율적으로 저장하고 빠르게 접근할 수 있도록 도와준다.
 
+    geth 코드 - levelDB 확인:
+        go-ethereum\core\rawdb\schema.go, line: 30
+
+    goleveldb 모듈:
+        Go 프로그래밍 언어로 LevelDB 키/값 데이터베이스를 구현한 것이다.
+
+        설치:
+            $ go mod init geth
+            $ go get github.com/syndtr/goleveldb/leveld
+
+        사용(Geth 종료상태):
+            > eth.blockNumber
+            > eth.getBlock(2679)
+            {
+                baseFeePerGas: 7,
+                difficulty: 337101,
+                extraData: "0xda83010a1a846765746888676f312e31382e358777696e646f7773",
+                gasLimit: 30000000,
+                gasUsed: 0,
+                hash: "0xa879438763c34a9c7b53f6fc0cb79b67e789b23e0a89218f8ee60ed88d9e3699",
+                logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                miner: "0x0c33043f0926e2e2467fca96117ebefbf86d660b",   
+                mixHash: "0x9394b10e08f263f196ed4261dc607c3856ab368f78183c6bb2e9925ecba18ad2",
+                nonce: "0x414e3b8260bab7aa",
+                number: 2679,
+                parentHash: "0x00f0d16d1ae0fd6a29928c6c3ed7fb09105a6571c37d1e3b5645169534456266",
+                receiptsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+                sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+                size: 542,
+                stateRoot: "0xd2266c557d0b30ff11ac670f86da87aed75306082be47a0b426447b84e04d559",
+                timestamp: 1745904570,
+                totalDifficulty: 619355398,
+                transactions: [],
+                transactionsRoot: "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+                uncles: []
+            }
+
+            $ cd levelDB/
+            $ go run main.go
+            [168 121 67 135 99 195 74 156 123 83 246 252 12 183 155 103 231 137 178 62 10 137 33 143 142 230 14 216 141 158 54 153]
+            Encoded Hex String:  a879438763c34a9c7b53f6fc0cb79b67e789b23e0a89218f8ee60ed88d9e3699
+
+    geth-leveldb-explorer (GO에서 Geth를 위한 데이터베이스 탐색기):
+        https://github.com/MartiTM/geth-leveldb-explorer
